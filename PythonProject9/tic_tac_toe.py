@@ -117,7 +117,7 @@ def play_game():
 
 def play_again():
     '''
-    asks the player if they want to play again and validates the answer
+    asks the player if they want to play again and validates the answer to get y or n only
     :return: bool -> True or False
     '''
     while True:
@@ -148,6 +148,8 @@ def print_total():
 
 
 to_play = True
+print('hello!! welcom to my tic tac toe game hope u enjoy!'
+      'pls enter one of the nums you see on the board!')
 while to_play:
     play_game()
     print_total()
