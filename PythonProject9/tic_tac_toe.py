@@ -1,6 +1,6 @@
 wins = [0,0]
 
-def create_board():
+def create_board() -> list:
     '''
     creates a list for the board positions
     :return: list of positions
@@ -8,23 +8,23 @@ def create_board():
     board = ['1', '2', '3', '4', '5', '6', '7', '8', '9']
     return board
 
-def print_board(lst):
+def print_board(list):
     '''
     prints the board
-    :param lst: the board positions
+    :param list: the board positions
     :return: prints the poard
     '''
     print()
     print('╔═══╦═══╦═══╗')
-    print(f'║ {lst[0]} ║ {lst[1]} ║ {lst[2]} ║')
+    print(f'║ {list[0]} ║ {list[1]} ║ {list[2]} ║')
     print('╠═══╬═══╬═══╣')
-    print(f'║ {lst[3]} ║ {lst[4]} ║ {lst[5]} ║')
+    print(f'║ {list[3]} ║ {list[4]} ║ {list[5]} ║')
     print('╠═══╬═══╬═══╣')
-    print(f'║ {lst[6]} ║ {lst[7]} ║ {lst[8]} ║')
+    print(f'║ {list[6]} ║ {list[7]} ║ {list[8]} ║')
     print('╚═══╩═══╩═══╝')
     print()
 
-def get_move(player, board):
+def get_move(player, board) -> str | None:
     '''
     gets an input from the user and checks if it in the board list
     if not asks to enter a valid position (1-9)
@@ -34,7 +34,9 @@ def get_move(player, board):
     '''
     while True:
         position = input(f'player {player} pls enter your move: ')
-        if position != 'X' and position != 'O':
+        if position == 'r' or position == 'R':
+            return 'r'
+        elif position != 'X' and position != 'O':
             if position in board:
                 return position
             else:
@@ -56,21 +58,21 @@ def make_move(board, position, symbol):
     board[int(position)-1] = symbol
     print_board(board)
 
-def switch_player(current):
+def switch_player(current) -> int:
     '''
     swiches the current player by toggeling the index between 1 and 0
     :param current: index of current player
-    :return: index of current player
+    :return: index of next player
     '''
     current = (current + 1) % 2
     return current
 
-def check_winner(board, symbol):
+def check_winner(board, symbol) -> bool:
     '''
     checks all possible winner combos
     and if they exist returns true else returns false
-    :param board:list of positions
-    :param symbol:list of symbols
+    :param board: list of positions
+    :param symbol: list of symbols
     :return:bool -> True or False
     '''
     wins = [[0, 1, 2],[3, 4, 5],[6, 7, 8],[0, 3, 6],[1, 4, 7],[2, 5, 8],[0, 4, 8],[2, 4, 6]]
@@ -79,7 +81,7 @@ def check_winner(board, symbol):
             return True
     return False
 
-def is_tie(board):
+def is_tie(board) -> bool:
     '''
     check if there is a tie by checking if any items on the
     list (board) are digits if yes the game hasent ended
@@ -92,10 +94,27 @@ def is_tie(board):
     else:
         return True
 
+def reset_game(player, current) -> list:
+    '''
+    prints the player who reset the game then switches
+    the player and adds 1 to his wins then prints the total score
+    and prints and returns the new board
+    :param player: list of the symbols representing the players
+    :param current: int
+    :return: list (new_board)
+    '''
+    print(f'Player {player[current]} has reset the game as a penalty the other player gets a point')
+    current = switch_player(current)
+    wins[current] += 1
+    print_total()
+    new_board = create_board()
+    print_board(new_board)
+    return new_board
+
 def play_game():
     '''
-    play the main game of tic tac toe and calls all the functions
-    :return:
+    plays the main game loop of tic tac toe and calls all the functions
+    :return: none
     '''
     players: list = ['X', 'O']
     current_pl: int = 0
@@ -105,6 +124,10 @@ def play_game():
 
     while True:
         position = get_move(players[current_pl], board)
+        if position == 'r':
+            board = reset_game(players, current_pl)
+            current_pl = 0
+            continue
         make_move(board, position, players[current_pl])
         if check_winner(board, players[current_pl]):
             print(f'Player {players[current_pl]} wins!')
@@ -115,9 +138,10 @@ def play_game():
             break
         current_pl = switch_player(current_pl)
 
-def play_again():
+def play_again() -> bool | None:
     '''
     asks the player if they want to play again and validates the answer to get y or n only
+    after that returns True or False to reset the game
     :return: bool -> True or False
     '''
     while True:
@@ -138,7 +162,7 @@ def play_again():
 
 def print_total():
     '''
-    prints out the total number of wins
+    prints out the total number of wins for both players
     :return: None
     '''
     print('╔══════════════════╗')
@@ -146,6 +170,8 @@ def print_total():
     print(f'║   {wins[0]}         {wins[1]}    ║')
     print('╚══════════════════╝')
 
+
+# main code
 
 to_play = True
 print('hello!! welcom to my tic tac toe game hope u enjoy!'
